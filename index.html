@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f5f0">
+  <title>Casa — Estudo residencial</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+</head>
+<body>
+  <header><a class="brand" href="./" aria-label="Casa, início"><span class="brand-icon">⌂</span> casa<span class="brand-dot">.</span></a><span class="header-divider"></span><span class="project-name">Estudo residencial <small>PLANTA INTERATIVA</small></span><span class="project-status"><i></i> Modelo de estudo</span><button id="reference-open" class="quiet">Ver referência ↗</button></header>
+  <main>
+    <aside>
+      <div class="eyebrow">EXPLORAR O PROJETO</div><h1>Um lugar<br>para chamar<br>de casa.</h1><p class="intro">Cada ambiente, uma perspectiva.<br>Explore a planta em três dimensões.</p>
+      <div class="summary"><div><strong>03</strong><span>quartos</span></div><div><strong>02</strong><span>banheiros</span></div><div><strong>01</strong><span>pavimento</span></div></div>
+      <div class="section-title">AMBIENTES <span>07</span></div><nav id="room-list" aria-label="Selecionar ambiente"></nav>
+      <details id="door-panel"><summary>Controlar portas</summary><p>Abrem para dentro dos ambientes.</p><div id="door-list"></div></details>
+      <details id="light-panel"><summary>Iluminação</summary><p>No passeio, clique nos interruptores da parede ou use F perto deles.</p><div id="light-list"></div></details>
+      <div class="note"><span>↗</span><p>Da planta ao espaço.<br><small>Medidas da referência em metros. Elementos sem cotas são aproximados.</small></p></div>
+    </aside>
+    <section class="workspace" aria-label="Visualização interativa da casa">
+      <div class="scene-heading"><div class="eyebrow">RESIDÊNCIA TÉRREA / 01</div><h2 id="scene-title">Uma nova perspectiva.</h2><p id="scene-subtitle">Planta mobiliada · vista tridimensional</p></div>
+      <div class="view-switch" role="group" aria-label="Modo de visualização"><button data-view="3d" aria-pressed="true">◈ <span>3D</span></button><button data-view="plan" aria-pressed="false">▦ <span>Planta</span></button><button data-view="walk" aria-pressed="false">↟ <span>Passear</span></button></div>
+      <div id="viewport"><div id="labels"></div><div id="loading" role="status">Construindo sua casa…</div></div>
+      <div class="compass" aria-label="Norte da planta"><span>N</span><svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 5 30 34 22 27 14 34Z" fill="none" stroke="currentColor"/><path d="M22 5V27L14 34Z" fill="currentColor"/></svg></div>
+      <div class="scene-actions"><button id="reset" title="Restaurar vista" aria-label="Restaurar vista">↺</button><button id="zoom-in" title="Aproximar" aria-label="Aproximar">+</button><button id="zoom-out" title="Afastar" aria-label="Afastar">−</button><button id="capture" title="Salvar imagem" aria-label="Salvar imagem">▧</button></div>
+      <div class="bottom-controls"><div class="layers"><label><input id="furniture" type="checkbox" checked><span>Mobiliário</span></label><label><input id="dimensions" type="checkbox" checked><span>Ambientes e medidas</span></label><label><input id="walls" type="checkbox"><span>Paredes completas</span></label></div><span class="scale">1 unidade = 1 metro</span></div>
+      <div id="light-interaction" hidden><button id="light-toggle" disabled>Aproxime-se de um interruptor</button><small>Clique na parede ou use F perto do interruptor.</small></div>
+      <div id="door-interaction" hidden><button id="door-toggle" disabled>Aproxime-se de uma porta</button><small id="door-hint">Use E ou toque no botão.</small></div>
+      <div id="walk-pad" hidden aria-label="Controles de caminhada"><button data-key="KeyW" aria-label="Andar para frente">↑</button><div><button data-key="KeyA" aria-label="Andar para esquerda">←</button><button data-key="KeyS" aria-label="Andar para trás">↓</button><button data-key="KeyD" aria-label="Andar para direita">→</button></div></div>
+    </section>
+  </main>
+  <footer><span><i></i> <span id="mode-status">VISTA GERAL</span></span><p id="help">Arraste para girar <b>·</b> Role para aproximar <b>·</b> Botão direito para mover</p><span class="footer-end">FEITO PARA EXPLORAR <span>↗</span></span></footer>
+  <dialog id="reference"><div class="dialog-heading"><h2>Planta de referência</h2><button id="reference-close" aria-label="Fechar referência">×</button></div><img src="./assets/planta-referencia.png" alt="Planta original com sala, cozinha, três quartos e dois banheiros lado a lado."><p>O modelo respeita as dimensões indicadas. Espessura das paredes, pé-direito, aberturas e circulação foram estimados para construir a visualização.</p></dialog>
+  <script type="module">import('./main.js').catch(error => { console.error(error); const status = document.querySelector('#loading'); status.hidden = false; status.textContent = 'Não foi possível iniciar o modelo. Abra o projeto por um servidor HTTP e use um navegador com WebGL 2.'; });</script>
+</body>
+</html>
