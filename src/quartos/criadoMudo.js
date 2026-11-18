@@ -1,4 +1,13 @@
-import { box, group, cylinder } from '../utils.js';
-export function criarCriadoMudo(parent,x,z) {
-  const g=group(parent,x,z);box(g,.4,.45,.38,0,.25,0,'#c3ab86');box(g,.36,.16,.02,0,.36,.2,'#d9c5a5');box(g,.07,.014,.03,0,.36,.22,'#8b8064');cylinder(g,.085,.025,0,.49,0,'#8d967d');cylinder(g,.012,.17,0,.58,0,'#8d967d');cylinder(g,.12,.14,0,.72,0,'#ede6d3',.075);return g;
+import { cylinder, group } from '../utils.js';
+
+export function criarCriadoMudo(parent, x, z, luminaria = true) {
+  const g = group(parent, x, z);
+  cylinder(g, .175, .37, 0, .21, 0, '#a97e51');
+  cylinder(g, .205, .045, 0, .405, 0, '#bb9568');
+  if (luminaria) {
+    cylinder(g, .087, .021, 0, .44, 0, '#e7dfd3');
+    cylinder(g, .021, .17, 0, .525, 0, '#a88461');
+    cylinder(g, .126, .138, 0, .632, 0, '#f5ecdc', .095);
+  }
+  return g;
 }

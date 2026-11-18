@@ -1,37 +1,41 @@
 import * as THREE from 'three';
 import { box, group } from '../utils.js';
-import { ambientes, PE_DIREITO } from './planta.js';
+import { ambientes, ponto } from './planta.js';
 
-// Wall surface, at 1.15 m; rotation points the switch front toward the user.
-// Bathroom switches are on the corridor side, outside the wet rooms.
-export const interruptores = {
-  sala: [1.28,2.555,0], cozinha: [1.665,.99,Math.PI/2],
-  quarto1: [7.535,2.36,Math.PI/2], quarto2: [4.72,3.705,0],
-  quarto3: [7.32,3.705,0], banheiro1: [5.67,2.555,0],
-  banheiro2: [7.12,2.555,0], corredor: [4.72,3.535,Math.PI],
+// Interruptores junto aos acessos, a 1,15 m do piso.
+const interruptores = {
+  sala: [34, 736, Math.PI / 2], varanda: [65, 818, 0],
+  cozinha: [206, 489, Math.PI / 2], servico: [259, 268, Math.PI],
+  quartoServico: [311, 141, Math.PI], banheiroServico: [188, 133, -Math.PI / 2],
+  hall: [190, 479, 0], lavabo: [114, 503, -Math.PI / 2],
+  circulacao: [456, 564, 0],
+  suite1: [503, 628, 0], banheiro1: [574, 688, Math.PI / 2],
+  suite2: [551, 554, Math.PI], banheiro2: [623, 496, Math.PI],
+  suite3: [725, 554, Math.PI], banheiro3: [864, 502, Math.PI / 2],
+  suiteMaster: [728, 570, Math.PI / 2], banheiroMaster: [758, 687, -Math.PI / 2],
 };
 
 export function criarIluminacao(parent) {
   const root=new THREE.Group(); parent.add(root); root.visible=false;
   const circuits=[];
-  const rooms=[...ambientes,{id:'corredor',nome:'Corredor',x:2.85,z:2.54,w:4.53,d:1.01}];
-  for(const room of rooms) {
-    const x=room.x+room.w/2,z=room.z+room.d/2;
+  for(const room of ambientes) {
+    const [x,z]=room.centro;
     const fixture=group(root,x,z);
-    box(fixture,.43,.065,.43,0,PE_DIREITO-.035,0,'#b7b8ad');
-    const diffuser=box(fixture,.38,.018,.38,0,PE_DIREITO-.077,0,'#fff2d5');
+    box(fixture,.43,.065,.43,0,room.forro-.035,0,'#b7b8ad');
+    const diffuser=box(fixture,.38,.018,.38,0,room.forro-.077,0,'#fff2d5');
     diffuser.material=diffuser.material.clone();
     diffuser.material.emissive.set('#ffe4b1');
     diffuser.castShadow=false;
-    const power=room.id.startsWith('banheiro')?28:room.id==='corredor'?40:55;
-    const light=new THREE.SpotLight('#ffe4bd',power,8,1.28,.55,2);
-    light.position.set(x,PE_DIREITO-.12,z);
+    const power=room.id.startsWith('banheiro')?28:room.id==='circulacao'?40:55;
+    const light=new THREE.SpotLight('#ffe4bd',power,5.5,1.28,.55,2);
+    light.position.set(x,room.forro-.12,z);
     light.target.position.set(x,0,z);root.add(light,light.target);
-    light.castShadow=true;light.shadow.mapSize.set(1024,1024);
-    light.shadow.camera.near=.08;light.shadow.camera.far=8;
+    light.castShadow=true;light.visible=false;light.shadow.mapSize.set(1024,1024);
+    light.shadow.camera.near=.08;light.shadow.camera.far=5.5;
     light.shadow.normalBias=.025;light.shadow.bias=-.0002;
     light.shadow.autoUpdate=false;light.shadow.needsUpdate=true;
-    const [sx,sz,rotation]=interruptores[room.id];
+    const [px,pz,rotation]=interruptores[room.id];
+    const [sx,sz]=ponto([px,pz]);
     const wallSwitch=group(root,sx,sz,rotation);
     const plate=box(wallSwitch,.15,.23,.025,0,1.15,0,'#f6f4eb');
     const rocker=box(wallSwitch,.085,.135,.025,0,1.16,.022,'#e1e4d7');
@@ -57,6 +61,13 @@ export function criarIluminacao(parent) {
   return {
     root,circuits,
     setWalking(active) {root.visible=active;this.invalidate();},
+    updatePosition(position) {
+      // Mantém quatro mapas de sombra ativos durante o passeio.
+      const proximos = [...circuits]
+        .sort((a, b) => position.distanceToSquared(a.light.position) - position.distanceToSquared(b.light.position))
+        .slice(0, 4);
+      for (const c of circuits) c.light.visible = proximos.includes(c);
+    },
     invalidate() {for(const c of circuits)c.light.shadow.needsUpdate=true;},
     toggle(circuit) {circuit.on=!circuit.on;refresh(circuit);},
     nearest(position,occluders) {

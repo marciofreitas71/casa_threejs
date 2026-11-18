@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import * as THREE from '../vendor/three/three.module.js';
 
 export const palette = { wall: '#f4f2e9', trim: '#d6d5c9', wood: '#bd9169', darkWood: '#93734f', linen: '#e7e0ce', sage: '#8c9e80', dark: '#34493d', stone: '#e2dfd4', metal: '#959e99', white: '#faf9f3' };
 const materials = new Map();
